@@ -776,7 +776,7 @@ class DocumentService:
                             data_source_type='upload_file',
                             enabled=True,
                             name=file_name
-                        ).first()
+                        ).first()   # 根据条件判断 documents 是否存在文件记录，如果存在就是重复文件，否则就是新的文件
                         if document:
                             document.dataset_process_rule_id = dataset_process_rule.id
                             document.updated_at = datetime.datetime.utcnow()

@@ -13,14 +13,21 @@ class DataSourceOauthBinding(db.Model):
         db.Index('source_binding_tenant_id_idx', 'tenant_id'),
         db.Index('source_info_idx', "source_info", postgresql_using='gin')
     )
-
+    # 表的主键，使用 UUID 生成
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    # 租户 ID，标识数据源所属的租户
     tenant_id = db.Column(StringUUID, nullable=False)
+    # 访问令牌，用于访问数据源
     access_token = db.Column(db.String(255), nullable=False)
+    # 数据源提供商名称
     provider = db.Column(db.String(255), nullable=False)
+    # 包含数据源信息的 JSONB 字段
     source_info = db.Column(JSONB, nullable=False)
+    # 记录创建时间
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    # 记录更新时间
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    # 标识该记录是否被禁用
     disabled = db.Column(db.Boolean, nullable=True, server_default=db.text('false'))
 
 

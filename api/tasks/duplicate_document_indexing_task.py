@@ -22,12 +22,18 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
 
     Usage: duplicate_document_indexing_task.delay(dataset_id, document_id)
     """
+    # 这个任务用于处理 重复文档 的索引。当已存在的文档被标记为 重复并需要重新索引时，
+    # 这个任务会被触发。它接收两个参数：数据集的ID 和 需要重新索引的文档的ID列表。
+    # 这个任务会对每个需要重新索引的文档进行索引处理。
+
     documents = []
     start_at = time.perf_counter()
-
+    # 步骤一 获取指定ID的数据集
     dataset = db.session.query(Dataset).filter(Dataset.id == dataset_id).first()
 
     # check document limit
+    # 步骤二 检查文档的数量是否超过了批量上传的限制或者文档上传的配额。
+    # 如果超过了限制，它会抛出一个异常，并将索引状态设置为 error
     features = FeatureService.get_features(dataset.tenant_id)
     try:
         if features.billing.enabled:
@@ -60,7 +66,8 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
             Document.id == document_id,
             Document.dataset_id == dataset_id
         ).first()
-
+        # 步骤三 对每个需要重新索引的文档， 清理旧的数据， 包括从向量索引中 删除旧的数据 和 删除数据库中的旧数据。
+        # 然后，将索引状态设置为  parsing  ，并将处理开始的时间设置为当前时间
         if document:
             # clean old data
             index_type = document.doc_form
@@ -84,6 +91,7 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
     db.session.commit()
 
     try:
+        # 步骤四 创建一个 IndexingRunner 实例，并调用其 run 方法来运行索引处理。如果在处理过程中发生了任何异常，捕获这个异常并记录日志
         indexing_runner = IndexingRunner()
         indexing_runner.run(documents)
         end_at = time.perf_counter()

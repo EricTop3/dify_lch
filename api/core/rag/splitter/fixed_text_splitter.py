@@ -60,6 +60,12 @@ class FixedRecursiveCharacterTextSplitter(EnhanceRecursiveCharacterTextSplitter)
 
     def split_text(self, text: str) -> list[str]:
         """Split incoming text and return chunks."""
+          # 自定义切分的主要差异是会先按照用户指定的分段标识符进行额外切分，但是要特别注意这部分目前的实现比较粗糙：
+          # 1、按照用户指定的分段标识符进行切分时，分段重叠参数是不生效的，Dify 会直接按照指定的分段标识符切分；
+          # 2、按照用户指定的分段标识符切分时，不会执行分段的合并，可能会产生大量的长度较小的碎片文本；
+          # 3、用户指定的分段标识符为空的情况下，执行的 chunks = list(text) 明显是有问题的，会按照单个字母切分字符串，最终完全不可用；
+
+         # 额外指定分段标识符的情况下，会按照用户指定的分隔标识符先切分
         if self._fixed_separator:
             chunks = text.split(self._fixed_separator)
         else:
@@ -67,6 +73,7 @@ class FixedRecursiveCharacterTextSplitter(EnhanceRecursiveCharacterTextSplitter)
 
         final_chunks = []
         for chunk in chunks:
+            # 按照用户执行的分段标识符切分后超过阈值，此时按照标识符列表依次递归切分
             if self._length_function(chunk) > self._chunk_size:
                 final_chunks.extend(self.recursive_split_text(chunk))
             else:

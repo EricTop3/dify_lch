@@ -19,12 +19,14 @@ from .account import Account, Tenant
 
 
 class DifySetup(db.Model):
+    # Dify 设置表
     __tablename__ = 'dify_setups'
     __table_args__ = (
         db.PrimaryKeyConstraint('version', name='dify_setup_pkey'),
     )
-
+    # 版本
     version = db.Column(db.String(255), nullable=False)
+    # 设置时间
     setup_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
 
@@ -51,6 +53,7 @@ class AppMode(Enum):
 
 
 class App(db.Model):
+    # 应用表
     __tablename__ = 'apps'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='app_pkey'),
@@ -64,15 +67,25 @@ class App(db.Model):
     mode = db.Column(db.String(255), nullable=False)
     icon = db.Column(db.String(255))
     icon_background = db.Column(db.String(255))
+    # 应用模型配置ID
     app_model_config_id = db.Column(StringUUID, nullable=True)
+    # 工作流ID
     workflow_id = db.Column(StringUUID, nullable=True)
+    # 状态
     status = db.Column(db.String(255), nullable=False, server_default=db.text("'normal'::character varying"))
+    # 启用站点
     enable_site = db.Column(db.Boolean, nullable=False)
+    # 启用API
     enable_api = db.Column(db.Boolean, nullable=False)
+    # API请求每分钟
     api_rpm = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
+    # API请求每小时
     api_rph = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
+    # 是否为演示
     is_demo = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
+    # 是否公开
     is_public = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
+    # 是否通用
     is_universal = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
     tracing = db.Column(db.Text, nullable=True)
     max_active_requests = db.Column(db.Integer, nullable=True)
@@ -204,6 +217,7 @@ class App(db.Model):
 
 
 class AppModelConfig(db.Model):
+    # 应用模型配置表
     __tablename__ = 'app_model_configs'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='app_model_config_pkey'),
@@ -218,23 +232,41 @@ class AppModelConfig(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     opening_statement = db.Column(db.Text)
+    # 推荐问题
     suggested_questions = db.Column(db.Text)
+    # 回答后的推荐问题
     suggested_questions_after_answer = db.Column(db.Text)
+    # 语音转文本
     speech_to_text = db.Column(db.Text)
+    # 文本转语音
     text_to_speech = db.Column(db.Text)
+    # 类似内容
     more_like_this = db.Column(db.Text)
+    # 模型
     model = db.Column(db.Text)
+    # 用户输入表单
     user_input_form = db.Column(db.Text)
+    # 数据集查询变量
     dataset_query_variable = db.Column(db.String(255))
+    # 预提示
     pre_prompt = db.Column(db.Text)
+    # 代理模式
     agent_mode = db.Column(db.Text)
+    # 敏感词避让
     sensitive_word_avoidance = db.Column(db.Text)
+    # 检索资源
     retriever_resource = db.Column(db.Text)
+    # 提示类型
     prompt_type = db.Column(db.String(255), nullable=False, server_default=db.text("'simple'::character varying"))
+    # 聊天提示配置
     chat_prompt_config = db.Column(db.Text)
+    # 完成提示配置
     completion_prompt_config = db.Column(db.Text)
+    # 数据集配置
     dataset_configs = db.Column(db.Text)
+    # 外部数据工具
     external_data_tools = db.Column(db.Text)
+    # 文件上传
     file_upload = db.Column(db.Text)
 
     @property
@@ -428,6 +460,7 @@ class AppModelConfig(db.Model):
 
 
 class RecommendedApp(db.Model):
+    # 推荐应用表
     __tablename__ = 'recommended_apps'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='recommended_app_pkey'),
@@ -440,10 +473,13 @@ class RecommendedApp(db.Model):
     description = db.Column(db.JSON, nullable=False)
     copyright = db.Column(db.String(255), nullable=False)
     privacy_policy = db.Column(db.String(255), nullable=False)
+    # 自定义免责声明
     custom_disclaimer = db.Column(db.String(255), nullable=True)
+    # 分类
     category = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, nullable=False, default=0)
     is_listed = db.Column(db.Boolean, nullable=False, default=True)
+    # 安装数量
     install_count = db.Column(db.Integer, nullable=False, default=0)
     language = db.Column(db.String(255), nullable=False, server_default=db.text("'en-US'::character varying"))
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -456,6 +492,7 @@ class RecommendedApp(db.Model):
 
 
 class InstalledApp(db.Model):
+    # 已安装应用表
     __tablename__ = 'installed_apps'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='installed_app_pkey'),
@@ -467,9 +504,12 @@ class InstalledApp(db.Model):
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=False)
+    # 应用所有者租户ID
     app_owner_tenant_id = db.Column(StringUUID, nullable=False)
     position = db.Column(db.Integer, nullable=False, default=0)
+    # 是否固定
     is_pinned = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
+    # 最后使用时间
     last_used_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
@@ -486,6 +526,7 @@ class InstalledApp(db.Model):
 
 
 class Conversation(db.Model):
+    # 会话表
     __tablename__ = 'conversations'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='conversation_pkey'),
@@ -494,23 +535,34 @@ class Conversation(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     app_id = db.Column(StringUUID, nullable=False)
+    # 应用模型配置ID
     app_model_config_id = db.Column(StringUUID, nullable=True)
     model_provider = db.Column(db.String(255), nullable=True)
+    # 覆盖模型配置
     override_model_configs = db.Column(db.Text)
     model_id = db.Column(db.String(255), nullable=True)
     mode = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
+    # 摘要
     summary = db.Column(db.Text)
     inputs = db.Column(db.JSON)
     introduction = db.Column(db.Text)
+    # 系统指令
     system_instruction = db.Column(db.Text)
+    # 系统指令令牌数
     system_instruction_tokens = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
     status = db.Column(db.String(255), nullable=False)
+    # 调用来源
     invoke_from = db.Column(db.String(255), nullable=True)
+    # 来源
     from_source = db.Column(db.String(255), nullable=False)
+    # 来源用户ID
     from_end_user_id = db.Column(StringUUID)
+    # 来源账户ID
     from_account_id = db.Column(StringUUID)
+    # 阅读时间
     read_at = db.Column(db.DateTime)
+    # 阅读账户ID
     read_account_id = db.Column(StringUUID)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -623,6 +675,7 @@ class Conversation(db.Model):
 
 
 class Message(db.Model):
+    # 消息表
     __tablename__ = 'messages'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_pkey'),
@@ -642,26 +695,41 @@ class Message(db.Model):
     inputs = db.Column(db.JSON)
     query = db.Column(db.Text, nullable=False)
     message = db.Column(db.JSON, nullable=False)
+    # 消息令牌数
     message_tokens = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
+    # 消息单价
     message_unit_price = db.Column(db.Numeric(10, 4), nullable=False)
+    # 消息价格单位
     message_price_unit = db.Column(db.Numeric(10, 7), nullable=False, server_default=db.text('0.001'))
+    # 回答
     answer = db.Column(db.Text, nullable=False)
+    # 回答令牌数
     answer_tokens = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
+    # 回答单价
     answer_unit_price = db.Column(db.Numeric(10, 4), nullable=False)
+    # 回答价格单位
     answer_price_unit = db.Column(db.Numeric(10, 7), nullable=False, server_default=db.text('0.001'))
+    # 提供者响应延迟
     provider_response_latency = db.Column(db.Float, nullable=False, server_default=db.text('0'))
     total_price = db.Column(db.Numeric(10, 7))
     currency = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(255), nullable=False, server_default=db.text("'normal'::character varying"))
     error = db.Column(db.Text)
+    # 消息元数据
     message_metadata = db.Column(db.Text)
+    # 调用来源
     invoke_from = db.Column(db.String(255), nullable=True)
+    # 来源
     from_source = db.Column(db.String(255), nullable=False)
+    # 来源用户ID
     from_end_user_id = db.Column(StringUUID)
+    # 来源账户ID
     from_account_id = db.Column(StringUUID)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    # 基于代理
     agent_based = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
+    # 工作流运行ID
     workflow_run_id = db.Column(StringUUID)
 
     @property
@@ -888,6 +956,7 @@ class Message(db.Model):
 
 
 class MessageFeedback(db.Model):
+    # 消息反馈表
     __tablename__ = 'message_feedbacks'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_feedback_pkey'),
@@ -898,12 +967,18 @@ class MessageFeedback(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     app_id = db.Column(StringUUID, nullable=False)
+    # 会话ID
     conversation_id = db.Column(StringUUID, nullable=False)
+    # 消息ID
     message_id = db.Column(StringUUID, nullable=False)
+    # 评分
     rating = db.Column(db.String(255), nullable=False)
+    # 内容
     content = db.Column(db.Text)
     from_source = db.Column(db.String(255), nullable=False)
+    # 来源用户ID
     from_end_user_id = db.Column(StringUUID)
+    # 来源账户ID
     from_account_id = db.Column(StringUUID)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -915,6 +990,7 @@ class MessageFeedback(db.Model):
 
 
 class MessageFile(db.Model):
+    # 消息文件表
     __tablename__ = 'message_files'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_file_pkey'),
@@ -925,16 +1001,22 @@ class MessageFile(db.Model):
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     message_id = db.Column(StringUUID, nullable=False)
     type = db.Column(db.String(255), nullable=False)
+    # 传输方式
     transfer_method = db.Column(db.String(255), nullable=False)
+    # URL
     url = db.Column(db.Text, nullable=True)
+    # 所属
     belongs_to = db.Column(db.String(255), nullable=True)
+    # 上传文件ID
     upload_file_id = db.Column(StringUUID, nullable=True)
+    # 创建者角色
     created_by_role = db.Column(db.String(255), nullable=False)
     created_by = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
 
 class MessageAnnotation(db.Model):
+    # 消息注释表
     __tablename__ = 'message_annotations'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_annotation_pkey'),
@@ -949,7 +1031,9 @@ class MessageAnnotation(db.Model):
     message_id = db.Column(StringUUID, nullable=True)
     question = db.Column(db.Text, nullable=True)
     content = db.Column(db.Text, nullable=False)
+    # 点击数
     hit_count = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
+    # 账户ID
     account_id = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -966,6 +1050,7 @@ class MessageAnnotation(db.Model):
 
 
 class AppAnnotationHitHistory(db.Model):
+    # 应用注释命中历史表
     __tablename__ = 'app_annotation_hit_histories'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='app_annotation_hit_histories_pkey'),
@@ -977,14 +1062,19 @@ class AppAnnotationHitHistory(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     app_id = db.Column(StringUUID, nullable=False)
+    #	注释ID
     annotation_id = db.Column(StringUUID, nullable=False)
     source = db.Column(db.Text, nullable=False)
     question = db.Column(db.Text, nullable=False)
     account_id = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    # 评分
     score = db.Column(Float, nullable=False, server_default=db.text('0'))
+    # 消息ID
     message_id = db.Column(StringUUID, nullable=False)
+    # 注释问题
     annotation_question = db.Column(db.Text, nullable=False)
+    # 注释内容
     annotation_content = db.Column(db.Text, nullable=False)
 
     @property
@@ -1001,6 +1091,7 @@ class AppAnnotationHitHistory(db.Model):
 
 
 class AppAnnotationSetting(db.Model):
+    # 应用注释设置表
     __tablename__ = 'app_annotation_settings'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='app_annotation_settings_pkey'),
@@ -1009,8 +1100,11 @@ class AppAnnotationSetting(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     app_id = db.Column(StringUUID, nullable=False)
+    # 评分阈值
     score_threshold = db.Column(Float, nullable=False, server_default=db.text('0'))
+    # 集合绑定ID
     collection_binding_id = db.Column(StringUUID, nullable=False)
+    # 创建用户ID
     created_user_id = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_user_id = db.Column(StringUUID, nullable=False)
@@ -1039,6 +1133,7 @@ class AppAnnotationSetting(db.Model):
 
 
 class OperationLog(db.Model):
+    # 操作日志表
     __tablename__ = 'operation_logs'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='operation_log_pkey'),
@@ -1048,6 +1143,7 @@ class OperationLog(db.Model):
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
     account_id = db.Column(StringUUID, nullable=False)
+    # 操作
     action = db.Column(db.String(255), nullable=False)
     content = db.Column(db.JSON)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -1056,6 +1152,7 @@ class OperationLog(db.Model):
 
 
 class EndUser(UserMixin, db.Model):
+    # 终端用户表
     __tablename__ = 'end_users'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='end_user_pkey'),
@@ -1067,9 +1164,12 @@ class EndUser(UserMixin, db.Model):
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=True)
     type = db.Column(db.String(255), nullable=False)
+    # 外部用户ID
     external_user_id = db.Column(db.String(255), nullable=True)
     name = db.Column(db.String(255))
+    # 是否匿名
     is_anonymous = db.Column(db.Boolean, nullable=False, server_default=db.text('true'))
+    # 会话ID
     session_id = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -1093,11 +1193,16 @@ class Site(db.Model):
     chat_color_theme = db.Column(db.String(255))
     chat_color_theme_inverted = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
     copyright = db.Column(db.String(255))
+    # 隐私政策
     privacy_policy = db.Column(db.String(255))
     show_workflow_steps = db.Column(db.Boolean, nullable=False, server_default=db.text('true'))
+    # 自定义免责声明
     custom_disclaimer = db.Column(db.String(255), nullable=True)
+    # 自定义域名
     customize_domain = db.Column(db.String(255))
+    # 自定义令牌策略
     customize_token_strategy = db.Column(db.String(255), nullable=False)
+    # 提示公开
     prompt_public = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
     status = db.Column(db.String(255), nullable=False, server_default=db.text("'normal'::character varying"))
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -1120,6 +1225,7 @@ class Site(db.Model):
 
 
 class ApiToken(db.Model):
+    # API 令牌表
     __tablename__ = 'api_tokens'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='api_token_pkey'),
@@ -1147,6 +1253,7 @@ class ApiToken(db.Model):
 
 
 class UploadFile(db.Model):
+    # 上传文件表
     __tablename__ = 'upload_files'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='upload_file_pkey'),
@@ -1159,9 +1266,13 @@ class UploadFile(db.Model):
     key = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     size = db.Column(db.Integer, nullable=False)
+    # 扩展名
     extension = db.Column(db.String(255), nullable=False)
+    # MIME类型
     mime_type = db.Column(db.String(255), nullable=True)
+    # 创建者角色
     created_by_role = db.Column(db.String(255), nullable=False, server_default=db.text("'account'::character varying"))
+    # 创建者
     created_by = db.Column(StringUUID, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     used = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
@@ -1171,6 +1282,7 @@ class UploadFile(db.Model):
 
 
 class ApiRequest(db.Model):
+  # API 请求记录表
     __tablename__ = 'api_requests'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='api_request_pkey'),
@@ -1179,15 +1291,21 @@ class ApiRequest(db.Model):
 
     id = db.Column(StringUUID, nullable=False, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
+    # API令牌ID
     api_token_id = db.Column(StringUUID, nullable=False)
+    # 路径
     path = db.Column(db.String(255), nullable=False)
+    # 请求
     request = db.Column(db.Text, nullable=True)
+    # 响应
     response = db.Column(db.Text, nullable=True)
+    # IP地址
     ip = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
 
 class MessageChain(db.Model):
+    # 消息链表
     __tablename__ = 'message_chains'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_chain_pkey'),
@@ -1195,7 +1313,9 @@ class MessageChain(db.Model):
     )
 
     id = db.Column(StringUUID, nullable=False, server_default=db.text('uuid_generate_v4()'))
+    # 消息ID
     message_id = db.Column(StringUUID, nullable=False)
+    # 类型
     type = db.Column(db.String(255), nullable=False)
     input = db.Column(db.Text, nullable=True)
     output = db.Column(db.Text, nullable=True)
@@ -1203,6 +1323,7 @@ class MessageChain(db.Model):
 
 
 class MessageAgentThought(db.Model):
+    # 消息代理想法表
     __tablename__ = 'message_agent_thoughts'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='message_agent_thought_pkey'),
@@ -1212,17 +1333,22 @@ class MessageAgentThought(db.Model):
 
     id = db.Column(StringUUID, nullable=False, server_default=db.text('uuid_generate_v4()'))
     message_id = db.Column(StringUUID, nullable=False)
+    # 消息链ID
     message_chain_id = db.Column(StringUUID, nullable=True)
     position = db.Column(db.Integer, nullable=False)
     thought = db.Column(db.Text, nullable=True)
     tool = db.Column(db.Text, nullable=True)
+    # 工具标签
     tool_labels_str = db.Column(db.Text, nullable=False, server_default=db.text("'{}'::text"))
+    # 工具元数据
     tool_meta_str = db.Column(db.Text, nullable=False, server_default=db.text("'{}'::text"))
     tool_input = db.Column(db.Text, nullable=True)
     observation = db.Column(db.Text, nullable=True)
     # plugin_id = db.Column(StringUUID, nullable=True)  ## for future design
+    # 工具处理数据
     tool_process_data = db.Column(db.Text, nullable=True)
     message = db.Column(db.Text, nullable=True)
+    # 消息令牌数
     message_token = db.Column(db.Integer, nullable=True)
     message_unit_price = db.Column(db.Numeric, nullable=True)
     message_price_unit = db.Column(db.Numeric(10, 7), nullable=False, server_default=db.text('0.001'))
@@ -1321,6 +1447,7 @@ class MessageAgentThought(db.Model):
 
 
 class DatasetRetrieverResource(db.Model):
+    # 数据集检索资源表
     __tablename__ = 'dataset_retriever_resources'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_retriever_resource_pkey'),
@@ -1330,16 +1457,27 @@ class DatasetRetrieverResource(db.Model):
     id = db.Column(StringUUID, nullable=False, server_default=db.text('uuid_generate_v4()'))
     message_id = db.Column(StringUUID, nullable=False)
     position = db.Column(db.Integer, nullable=False)
+    # 数据集ID
     dataset_id = db.Column(StringUUID, nullable=False)
+    # 数据集名称
     dataset_name = db.Column(db.Text, nullable=False)
+    # 文档ID
     document_id = db.Column(StringUUID, nullable=False)
+    # 文档名称
     document_name = db.Column(db.Text, nullable=False)
+    # 数据源类型
     data_source_type = db.Column(db.Text, nullable=False)
+    # 段ID
     segment_id = db.Column(StringUUID, nullable=False)
+    # 评分
     score = db.Column(db.Float, nullable=True)
+    # 内容
     content = db.Column(db.Text, nullable=False)
+    # 点击数
     hit_count = db.Column(db.Integer, nullable=True)
+    # 单词数
     word_count = db.Column(db.Integer, nullable=True)
+    # 段位置
     segment_position = db.Column(db.Integer, nullable=True)
     index_node_hash = db.Column(db.Text, nullable=True)
     retriever_from = db.Column(db.Text, nullable=False)
@@ -1348,6 +1486,7 @@ class DatasetRetrieverResource(db.Model):
 
 
 class Tag(db.Model):
+    # 标签表
     __tablename__ = 'tags'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='tag_pkey'),
@@ -1366,6 +1505,7 @@ class Tag(db.Model):
 
 
 class TagBinding(db.Model):
+    # 标签绑定表
     __tablename__ = 'tag_bindings'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='tag_binding_pkey'),

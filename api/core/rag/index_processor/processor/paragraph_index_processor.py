@@ -22,21 +22,23 @@ class ParagraphIndexProcessor(BaseIndexProcessor):
                                              is_automatic=kwargs.get('process_rule_mode') == "automatic")
 
         return text_docs
-
+    # 对文档进行 预处理 和 分割，以便后续的 索引 或 其它处理步骤 可以更有效地处理文档的各个部分
     def transform(self, documents: list[Document], **kwargs) -> list[Document]:
         # Split the text documents into nodes.
+        # 获取分割器：根据传入的处理规则 process_rule 和 嵌入模型实例 embedding_model_instance 获取文档分割器（splitter）
         splitter = self._get_splitter(processing_rule=kwargs.get('process_rule'),
                                       embedding_model_instance=kwargs.get('embedding_model_instance'))
         all_documents = []
         for document in documents:
-            # document clean
+            # document clean 文档清理、移除不需要的字符或格式
             document_text = CleanProcessor.clean(document.page_content, kwargs.get('process_rule'))
             document.page_content = document_text
-            # parse document to nodes
+            # parse document to nodes 文档分割，将清理后的文档内容分割成多个节点，每个节点代表文档的一部分
             document_nodes = splitter.split_documents([document])
             split_documents = []
             for document_node in document_nodes:
-
+                #节点处理：对于每个分割后的节点，如果节点内容非空，则生成一个唯一的文档ID（ doc_id ）和 文本哈希值（ hash ），
+                # 并将这些信息添加到节点的 元数据 中。如果节点内容以特定字符（如.或。）开头，则移除这些字符
                 if document_node.page_content.strip():
                     doc_id = str(uuid.uuid4())
                     hash = helper.generate_text_hash(document_node.page_content)
@@ -50,6 +52,7 @@ class ParagraphIndexProcessor(BaseIndexProcessor):
                         page_content = page_content
                     if len(page_content) > 0:
                         document_node.page_content = page_content
+                        # 收集文档节点 将处理后的节点添加到一个列表中（split_documents），以便进一步处理
                         split_documents.append(document_node)
             all_documents.extend(split_documents)
         return all_documents

@@ -197,18 +197,25 @@ def unauthorized_handler():
 
 
 # register blueprint routers
-def register_blueprints(app):
-    from controllers.console import bp as console_app_bp
-    from controllers.files import bp as files_bp
-    from controllers.inner_api import bp as inner_api_bp
-    from controllers.service_api import bp as service_api_bp
-    from controllers.web import bp as web_bp
 
+# 定义了一个名为 register_blueprints 的函数，接收一个 Flask 应用实例 app 作为参数
+# 用于将多个蓝图注册到 Flask 应用实例中，并配置跨域资源共享（CORS）。
+# CORS 配置允许跨域请求，从而使不同来源的客户端能够访问 API。
+
+def register_blueprints(app):
+    from controllers.console import bp as console_app_bp        # 控制台
+    from controllers.files import bp as files_bp                # 文件
+    from controllers.inner_api import bp as inner_api_bp        # 内部api
+    from controllers.service_api import bp as service_api_bp    # 服务api
+    from controllers.web import bp as web_bp                    # web
+    # 导入了五个蓝图（Blueprint）对象，并分别命名为 console_app_bp、files_bp、inner_api_bp、service_api_bp 和 web_bp。
+    # 这些蓝图分别位于 controllers.console、controllers.files、controllers.inner_api、
+    # controllers.service_api 和 controllers.web 模块中
     CORS(service_api_bp,
          allow_headers=['Content-Type', 'Authorization', 'X-App-Code'],
          methods=['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS', 'PATCH']
          )
-    app.register_blueprint(service_api_bp)
+    app.register_blueprint(service_api_bp)         # 注册服务api蓝图 到 Flask 应用中
 
     CORS(web_bp,
          resources={
@@ -219,7 +226,7 @@ def register_blueprints(app):
          expose_headers=['X-Version', 'X-Env']
          )
 
-    app.register_blueprint(web_bp)
+    app.register_blueprint(web_bp)                 # 注册web蓝图 到 Flask 应用中
 
     CORS(console_app_bp,
          resources={
@@ -230,15 +237,15 @@ def register_blueprints(app):
          expose_headers=['X-Version', 'X-Env']
          )
 
-    app.register_blueprint(console_app_bp)
+    app.register_blueprint(console_app_bp)         # 注册控制台蓝图 到 Flask 应用中
 
     CORS(files_bp,
          allow_headers=['Content-Type'],
          methods=['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS', 'PATCH']
          )
-    app.register_blueprint(files_bp)
+    app.register_blueprint(files_bp)               # 注册文件蓝图 到 Flask 应用中
 
-    app.register_blueprint(inner_api_bp)
+    app.register_blueprint(inner_api_bp)           # 注册内部api蓝图 到 Flask 应用中
 
 
 # create app

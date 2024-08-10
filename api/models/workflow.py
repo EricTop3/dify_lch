@@ -77,20 +77,20 @@ class Workflow(db.Model):
 
     Attributes:
 
-    - id (uuid) Workflow ID, pk
-    - tenant_id (uuid) Workspace ID
-    - app_id (uuid) App ID
-    - type (string) Workflow type
+    - id (uuid) Workflow ID, pk                   ID
+    - tenant_id (uuid) Workspace ID               工作区ID
+    - app_id (uuid) App ID                        应用ID
+    - type (string) Workflow type                 工作流类型
 
         `workflow` for `Workflow App`
 
         `chat` for `Chat App workflow mode`
 
-    - version (string) Version
+    - version (string) Version                                    版本
 
         `draft` for draft version (only one for each app), other for version number (redundant)
 
-    - graph (text) Workflow canvas configuration (JSON)
+    - graph (text) Workflow canvas configuration (JSON)           工作流画布配置
 
         The entire canvas configuration JSON, including Node, Edge, and other configurations
 
@@ -98,12 +98,12 @@ class Workflow(db.Model):
 
         - edges (array[object]) Edge list, see Edge Schema
 
-    - created_by (uuid) Creator ID
-    - created_at (timestamp) Creation time
-    - updated_by (uuid) `optional` Last updater ID
-    - updated_at (timestamp) `optional` Last update time
+    - created_by (uuid) Creator ID                              创建者ID
+    - created_at (timestamp) Creation time                      创建时间
+    - updated_by (uuid) `optional` Last updater ID              更新者ID
+    - updated_at (timestamp) `optional` Last update time        更新时间
     """
-
+    # 工作流表
     __tablename__ = 'workflows'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='workflow_pkey'),
@@ -303,38 +303,39 @@ class WorkflowRun(db.Model):
 
     Attributes:
 
-    - id (uuid) Run ID
-    - tenant_id (uuid) Workspace ID
-    - app_id (uuid) App ID
-    - sequence_number (int) Auto-increment sequence number, incremented within the App, starting from 1
-    - workflow_id (uuid) Workflow ID
-    - type (string) Workflow type
-    - triggered_from (string) Trigger source
+    - id (uuid) Run ID                            ID
+    - tenant_id (uuid) Workspace ID               工作区ID
+    - app_id (uuid) App ID                        应用ID
+    - sequence_number (int) Auto-increment sequence number, incremented within the App, starting from 1     序列号
+    - workflow_id (uuid) Workflow ID              工作流ID
+    - type (string) Workflow type                 工作流类型
+    - triggered_from (string) Trigger source      触发来源
 
         `debugging` for canvas debugging
 
         `app-run` for (published) app execution
 
-    - version (string) Version
-    - graph (text) Workflow canvas configuration (JSON)
-    - inputs (text) Input parameters
-    - status (string) Execution status, `running` / `succeeded` / `failed` / `stopped`
-    - outputs (text) `optional` Output content
-    - error (string) `optional` Error reason
-    - elapsed_time (float) `optional` Time consumption (s)
-    - total_tokens (int) `optional` Total tokens used
-    - total_steps (int) Total steps (redundant), default 0
-    - created_by_role (string) Creator role
+    - version (string) Version                              版本
+    - graph (text) Workflow canvas configuration (JSON)     工作流画布配置
+    - inputs (text) Input parameters                                                          输入参数
+    - status (string) Execution status, `running` / `succeeded` / `failed` / `stopped`        执行状态
+    - outputs (text) `optional` Output content                                                输出内容
+    - error (string) `optional` Error reason                                                  错误原因
+    - elapsed_time (float) `optional` Time consumption (s)                                    耗时
+    - total_tokens (int) `optional` Total tokens used                                         总token数量
+    - total_steps (int) Total steps (redundant), default 0                                    总步骤数量
+    - created_by_role (string) Creator role                                                   创建者角色
 
         - `account` Console account
 
         - `end_user` End user
 
-    - created_by (uuid) Runner ID
-    - created_at (timestamp) Run time
-    - finished_at (timestamp) End time
+    - created_by (uuid) Runner ID              创建者ID
+    - created_at (timestamp) Run time          创建时间
+    - finished_at (timestamp) End time         结束时间
     """
 
+    # 工作流运行表
     __tablename__ = 'workflow_runs'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='workflow_run_pkey'),
@@ -497,32 +498,32 @@ class WorkflowNodeExecution(db.Model):
     """
     Workflow Node Execution
 
-    - id (uuid) Execution ID
-    - tenant_id (uuid) Workspace ID
-    - app_id (uuid) App ID
-    - workflow_id (uuid) Workflow ID
-    - triggered_from (string) Trigger source
+    - id (uuid) Execution ID                                 ID
+    - tenant_id (uuid) Workspace ID                          工作区ID
+    - app_id (uuid) App ID                                   应用ID
+    - workflow_id (uuid) Workflow ID                         工作流ID
+    - triggered_from (string) Trigger source                 触发来源
 
         `single-step` for single-step debugging
 
         `workflow-run` for workflow execution (debugging / user execution)
 
-    - workflow_run_id (uuid) `optional` Workflow run ID
+    - workflow_run_id (uuid) `optional` Workflow run ID      工作流运行ID
 
         Null for single-step debugging.
 
-    - index (int) Execution sequence number, used for displaying Tracing Node order
-    - predecessor_node_id (string) `optional` Predecessor node ID, used for displaying execution path
-    - node_id (string) Node ID
-    - node_type (string) Node type, such as `start`
-    - title (string) Node title
-    - inputs (json) All predecessor node variable content used in the node
-    - process_data (json) Node process data
-    - outputs (json) `optional` Node output variables
-    - status (string) Execution status, `running` / `succeeded` / `failed`
-    - error (string) `optional` Error reason
-    - elapsed_time (float) `optional` Time consumption (s)
-    - execution_metadata (text) Metadata
+    - index (int) Execution sequence number, used for displaying Tracing Node order                      执行序列号
+    - predecessor_node_id (string) `optional` Predecessor node ID, used for displaying execution path    前置节点ID
+    - node_id (string) Node ID                                                                           节点ID
+    - node_type (string) Node type, such as `start`                                                      节点类型
+    - title (string) Node title                                                                          节点标题
+    - inputs (json) All predecessor node variable content used in the node       输入参数
+    - process_data (json) Node process data                                      处理数据
+    - outputs (json) `optional` Node output variables                            输出变量
+    - status (string) Execution status, `running` / `succeeded` / `failed`       执行状态
+    - error (string) `optional` Error reason                                     错误原因
+    - elapsed_time (float) `optional` Time consumption (s)            耗时
+    - execution_metadata (text) Metadata                              执行元数据
 
         - total_tokens (int) `optional` Total tokens used
 
@@ -530,17 +531,18 @@ class WorkflowNodeExecution(db.Model):
 
         - currency (string) `optional` Currency, such as USD / RMB
 
-    - created_at (timestamp) Run time
-    - created_by_role (string) Creator role
+    - created_at (timestamp) Run time                        创建时间
+    - created_by_role (string) Creator role                  创建者角色
 
         - `account` Console account
 
         - `end_user` End user
 
-    - created_by (uuid) Runner ID
-    - finished_at (timestamp) End time
+    - created_by (uuid) Runner ID                        创建者ID
+    - finished_at (timestamp) End time                   结束时间
     """
 
+    # 工作流节点执行表
     __tablename__ = 'workflow_node_executions'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='workflow_node_execution_pkey'),
@@ -647,12 +649,12 @@ class WorkflowAppLog(db.Model):
 
     Attributes:
 
-    - id (uuid) run ID
-    - tenant_id (uuid) Workspace ID
-    - app_id (uuid) App ID
-    - workflow_id (uuid) Associated Workflow ID
-    - workflow_run_id (uuid) Associated Workflow Run ID
-    - created_from (string) Creation source
+    - id (uuid) run ID                                     ID
+    - tenant_id (uuid) Workspace ID                        工作区ID
+    - app_id (uuid) App ID                                 应用ID
+    - workflow_id (uuid) Associated Workflow ID            工作流ID
+    - workflow_run_id (uuid) Associated Workflow Run ID    工作流运行ID
+    - created_from (string) Creation source                创建来源
 
         `service-api` App Execution OpenAPI
 
@@ -660,16 +662,17 @@ class WorkflowAppLog(db.Model):
 
         `installed-app` Installed App
 
-    - created_by_role (string) Creator role
+    - created_by_role (string) Creator role                创建者角色
 
         - `account` Console account
 
         - `end_user` End user
 
-    - created_by (uuid) Creator ID, depends on the user table according to created_by_role
-    - created_at (timestamp) Creation time
+    - created_by (uuid) Creator ID, depends on the user table according to created_by_role  创建者ID
+    - created_at (timestamp) Creation time                                                  创建时间
     """
 
+    # 工作流应用日志表
     __tablename__ = 'workflow_app_logs'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='workflow_app_log_pkey'),

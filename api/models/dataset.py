@@ -22,6 +22,7 @@ from models.model import App, Tag, TagBinding, UploadFile
 
 
 class Dataset(db.Model):
+    # 数据集表
     __tablename__ = 'datasets'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_pkey'),
@@ -149,6 +150,7 @@ class Dataset(db.Model):
 
 
 class DatasetProcessRule(db.Model):
+    # 数据集处理规则表
     __tablename__ = 'dataset_process_rules'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_process_rule_pkey'),
@@ -198,6 +200,7 @@ class DatasetProcessRule(db.Model):
 
 
 class Document(db.Model):
+    # 文档表
     __tablename__ = 'documents'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='document_pkey'),
@@ -449,6 +452,7 @@ class Document(db.Model):
         )
 
 class DocumentSegment(db.Model):
+    # 文档分段表
     __tablename__ = 'document_segments'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='document_segment_pkey'),
@@ -547,6 +551,7 @@ class DocumentSegment(db.Model):
 
 
 class AppDatasetJoin(db.Model):
+  # 应用数据集关联表
     __tablename__ = 'app_dataset_joins'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='app_dataset_join_pkey'),
@@ -564,6 +569,7 @@ class AppDatasetJoin(db.Model):
 
 
 class DatasetQuery(db.Model):
+   # 数据集查询记录表
     __tablename__ = 'dataset_queries'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_query_pkey'),
@@ -581,6 +587,7 @@ class DatasetQuery(db.Model):
 
 
 class DatasetKeywordTable(db.Model):
+    # 数据集关键字表
     __tablename__ = 'dataset_keyword_tables'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_keyword_table_pkey'),
@@ -627,6 +634,7 @@ class DatasetKeywordTable(db.Model):
 
 
 class Embedding(db.Model):
+    # 嵌入表
     __tablename__ = 'embeddings'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='embedding_pkey'),
@@ -644,13 +652,16 @@ class Embedding(db.Model):
                               server_default=db.text("''::character varying"))
 
     def set_embedding(self, embedding_data: list[float]):
+        # 对象转换为一个字节流。这个字节流可以被存储或者传输
         self.embedding = pickle.dumps(embedding_data, protocol=pickle.HIGHEST_PROTOCOL)
 
     def get_embedding(self) -> list[float]:
+        # 重新转换（反序列化）为原始对象
         return pickle.loads(self.embedding)
 
 
 class DatasetCollectionBinding(db.Model):
+    # 数据集集合绑定表
     __tablename__ = 'dataset_collection_bindings'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='dataset_collection_bindings_pkey'),

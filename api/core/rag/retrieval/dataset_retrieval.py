@@ -221,6 +221,7 @@ class DatasetRetrieval:
             message_id: Optional[str] = None,
     ):
         tools = []
+        # 根据用户输入的意图，使用知识库的描述构造 prompt
         for dataset in available_datasets:
             description = dataset.description
             if not description:
@@ -238,11 +239,12 @@ class DatasetRetrieval:
             )
             tools.append(message_tool)
         dataset_id = None
+        # 支持 ReAct 模式, ReAct 模式则是基于ReAct, 通过 推理 + 任务的结合选择正确的知识库
         if planning_strategy == PlanningStrategy.REACT_ROUTER:
             react_multi_dataset_router = ReactMultiDatasetRouter()
             dataset_id = react_multi_dataset_router.invoke(query, tools, model_config, model_instance,
                                                            user_id, tenant_id)
-
+        # 支持 Function Call 模式  Function Call 模式就是构造了一个 prompt ，让大模型根据描述选择合适的知识库，实现比较简单
         elif planning_strategy == PlanningStrategy.ROUTER:
             function_call_router = FunctionCallMultiDatasetRouter()
             dataset_id = function_call_router.invoke(query, tools, model_config, model_instance)

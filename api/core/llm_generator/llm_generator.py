@@ -282,12 +282,12 @@ class LLMGenerator:
             tenant_id=tenant_id,
             model_type=ModelType.LLM,
         )
-
+        # 拼接出完整的调用 prompt
         prompt_messages = [
             SystemPromptMessage(content=prompt),
             UserPromptMessage(content=query)
         ]
-
+        # 调用大模型直接生成问答对
         response = model_instance.invoke_llm(
             prompt_messages=prompt_messages,
             model_parameters={

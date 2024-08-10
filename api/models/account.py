@@ -16,6 +16,7 @@ class AccountStatus(str, enum.Enum):
 
 
 class Account(UserMixin, db.Model):
+    # 账户信息表
     __tablename__ = 'accounts'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='account_pkey'),
@@ -26,15 +27,25 @@ class Account(UserMixin, db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=True)
+    # 密码盐
     password_salt = db.Column(db.String(255), nullable=True)
+    # 头像
     avatar = db.Column(db.String(255))
+    # 界面语言
     interface_language = db.Column(db.String(255))
+    # 界面主题
     interface_theme = db.Column(db.String(255))
+    # 时区
     timezone = db.Column(db.String(255))
+    # 上次登录时间
     last_login_at = db.Column(db.DateTime)
+    # 上次登录IP
     last_login_ip = db.Column(db.String(255))
+    # 上次活动时间
     last_active_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    # 状态
     status = db.Column(db.String(16), nullable=False, server_default=db.text("'active'::character varying"))
+    # 初始化时间
     initialized_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -158,6 +169,7 @@ class TenantAccountRole(str, enum.Enum):
                                  TenantAccountRole.DATASET_OPERATOR}
 
 class Tenant(db.Model):
+    # 租户表
     __tablename__ = 'tenants'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='tenant_pkey'),
@@ -165,9 +177,13 @@ class Tenant(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     name = db.Column(db.String(255), nullable=False)
+    # 加密公钥
     encrypt_public_key = db.Column(db.Text)
+    # 计划
     plan = db.Column(db.String(255), nullable=False, server_default=db.text("'basic'::character varying"))
+    # 状态
     status = db.Column(db.String(255), nullable=False, server_default=db.text("'normal'::character varying"))
+    # 自定义配置
     custom_config = db.Column(db.Text)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
@@ -195,6 +211,7 @@ class TenantAccountJoinRole(enum.Enum):
 
 
 class TenantAccountJoin(db.Model):
+    # 租户账户关联表
     __tablename__ = 'tenant_account_joins'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='tenant_account_join_pkey'),
@@ -204,16 +221,22 @@ class TenantAccountJoin(db.Model):
     )
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    # 租户ID
     tenant_id = db.Column(StringUUID, nullable=False)
+    # 账户ID
     account_id = db.Column(StringUUID, nullable=False)
+    # 当前
     current = db.Column(db.Boolean, nullable=False, server_default=db.text('false'))
+    # 角色
     role = db.Column(db.String(16), nullable=False, server_default='normal')
+    # 邀请人ID
     invited_by = db.Column(StringUUID, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
 
 class AccountIntegrate(db.Model):
+  # 账号整合信息表
     __tablename__ = 'account_integrates'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='account_integrate_pkey'),
@@ -223,14 +246,18 @@ class AccountIntegrate(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     account_id = db.Column(StringUUID, nullable=False)
+    # 提供者
     provider = db.Column(db.String(16), nullable=False)
+    # 开放ID
     open_id = db.Column(db.String(255), nullable=False)
+    # 加密令牌
     encrypted_token = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
     updated_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
 
 
 class InvitationCode(db.Model):
+    # 邀请码表
     __tablename__ = 'invitation_codes'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='invitation_code_pkey'),
@@ -239,11 +266,18 @@ class InvitationCode(db.Model):
     )
 
     id = db.Column(db.Integer, nullable=False)
+    # 批次
     batch = db.Column(db.String(255), nullable=False)
+    # 邀请码
     code = db.Column(db.String(32), nullable=False)
     status = db.Column(db.String(16), nullable=False, server_default=db.text("'unused'::character varying"))
+    # 使用时间
     used_at = db.Column(db.DateTime)
+    # 使用租户ID
     used_by_tenant_id = db.Column(StringUUID)
+    # 使用账户ID
     used_by_account_id = db.Column(StringUUID)
+    # 废弃时间
     deprecated_at = db.Column(db.DateTime)
+    # 创建时间
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))

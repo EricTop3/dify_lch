@@ -39,6 +39,7 @@ class RetrievalService:
         threads = []
         exceptions = []
         # retrieval_model source with keyword
+        # 关键词检索
         if retrival_method == 'keyword_search':
             keyword_thread = threading.Thread(target=RetrievalService.keyword_search, kwargs={
                 'flask_app': current_app._get_current_object(),
@@ -51,6 +52,7 @@ class RetrievalService:
             threads.append(keyword_thread)
             keyword_thread.start()
         # retrieval_model source with semantic
+        # 向量检索（混合检索中也会调用）
         if RetrievalMethod.is_support_semantic_search(retrival_method):
             embedding_thread = threading.Thread(target=RetrievalService.embedding_search, kwargs={
                 'flask_app': current_app._get_current_object(),
@@ -67,6 +69,7 @@ class RetrievalService:
             embedding_thread.start()
 
         # retrieval source with full text
+        # 文本检索（混合检索中也会调用）
         if RetrievalMethod.is_support_fulltext_search(retrival_method):
             full_text_index_thread = threading.Thread(target=RetrievalService.full_text_index_search, kwargs={
                 'flask_app': current_app._get_current_object(),
@@ -88,7 +91,7 @@ class RetrievalService:
         if exceptions:
             exception_message = ';\n'.join(exceptions)
             raise Exception(exception_message)
-
+        # 混合检索之后会执行向量和文本检索结果合并后的重排序
         if retrival_method == RetrievalMethod.HYBRID_SEARCH.value:
             data_post_processor = DataPostProcessor(str(dataset.tenant_id), reranking_mode,
                                                     reranking_model, weights, False)

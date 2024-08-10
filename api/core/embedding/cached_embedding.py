@@ -99,6 +99,10 @@ class CacheEmbedding(Embeddings):
             )
 
             embedding_results = embedding_result.embeddings[0]
+            # 将 embedding_results 向量归一化，并将结果转换为一个 Python 列表
+            # np.linalg.norm(embedding_results):使用 NumPy 的 linalg.norm函数计算embedding_results的范数，也就是其长度。
+            # 对于一个向量，其范数可以通过将每个元素的平方相加，然后取平方根得到
+            # 向量的每个元素都除以该向量的范数。这个操作称为归一化，它可以将向量的长度调整为 1，同时保持向量的方向不变。归一化后的向量也称为单位向量
             embedding_results = (embedding_results / np.linalg.norm(embedding_results)).tolist()
         except Exception as ex:
             raise ex

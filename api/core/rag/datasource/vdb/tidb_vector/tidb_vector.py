@@ -90,6 +90,13 @@ class TiDBVector(BaseVector):
                 return
             with Session(self._engine) as session:
                 session.begin()
+
+                # id: 这里的id是在 Dify 中生成 uuid
+                # text: 分片后的文本内容
+                # meta: 元数据，记录数据集id、文档id、知识库id等，用于条件查询
+                # vector: 分片向量，需要设置向量维度
+                # ${dimension} 表示向量的维度，这个取决于选择的 Embedding 模型。
+                # ${distance_func} 表示用户设置的距离度量方法，目前支持的值有cosine 和 l2
                 create_statement = sql_text(f"""
                     CREATE TABLE IF NOT EXISTS {self._collection_name} (
                         id CHAR(36) PRIMARY KEY,
@@ -197,6 +204,10 @@ class TiDBVector(BaseVector):
 
         with Session(self._engine) as session:
             select_statement = sql_text(
+                # ${query_vector} 表示查询向量，即用户问题向量化后的结果
+                # ${tidb_func} 表示 TiDB Vector 中支持的向量距离度量防范，目前支持的方法有 Vec_Cosine_Distance和 Vec_l2_Distance
+                # ${top_k} 表示结果 TopK 的具体个数
+                # ${distance} 表示向量库中的节点离查询节点的距离，Dify 知识库可以设置距离/分数阈值
                 f"""SELECT meta, text, distance FROM (
                         SELECT meta, text, {tidb_func}(vector, "{query_vector_str}")  as distance
                         FROM {self._collection_name}

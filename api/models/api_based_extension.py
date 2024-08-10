@@ -12,6 +12,7 @@ class APIBasedExtensionPoint(enum.Enum):
 
 
 class APIBasedExtension(db.Model):
+    # 基于 API 的扩展表
     __tablename__ = 'api_based_extensions'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='api_based_extension_pkey'),
@@ -21,6 +22,9 @@ class APIBasedExtension(db.Model):
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
     name = db.Column(db.String(255), nullable=False)
+    # API端点
     api_endpoint = db.Column(db.String(255), nullable=False)
+    # API密钥
     api_key = db.Column(db.Text, nullable=False)
+    # 创建时间
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))

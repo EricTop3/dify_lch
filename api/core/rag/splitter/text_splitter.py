@@ -495,10 +495,14 @@ class RecursiveCharacterTextSplitter(TextSplitter):
 
     def _split_text(self, text: str, separators: list[str]) -> list[str]:
         """Split incoming text and return chunks."""
+        # 实现思路，从 separators 中依次选择标识符，递归执行切分，切分后的片段暂存在 _good_splits 中，
+        # 为了避免切分后的文本长度过短，在加入最终的列表 final_chunks 之前会进行文本的合并
+        # 文本的合并常规就是依次遍历切片产生的片段，依次合并并保留必要的重合区域，以查看 _merge_splits() 方法的实现
         final_chunks = []
         # Get appropriate separator to use
         separator = separators[-1]
         new_separators = []
+        # 依次从指定的标识符列表中寻找合适的标识符
         for i, _s in enumerate(separators):
             if _s == "":
                 separator = _s
@@ -507,12 +511,13 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 separator = _s
                 new_separators = separators[i + 1:]
                 break
-
+        # 按照标识符进行切分
         splits = _split_text_with_regex(text, separator, self._keep_separator)
         # Now go merging things, recursively splitting longer texts.
         _good_splits = []
         _separator = "" if self._keep_separator else separator
         for s in splits:
+            # 长度没有超过阈值, 是一个较好的分割点
             if self._length_function(s) < self._chunk_size:
                 _good_splits.append(s)
             else:
@@ -523,8 +528,10 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 if not new_separators:
                     final_chunks.append(s)
                 else:
+                    # 长度超过阈值，递归按照后续的标识符进行切分
                     other_info = self._split_text(s, new_separators)
                     final_chunks.extend(other_info)
+        # 合并文本，尽量保证文本长度接近阈值，避免过短的碎片文本
         if _good_splits:
             merged_text = self._merge_splits(_good_splits, _separator)
             final_chunks.extend(merged_text)

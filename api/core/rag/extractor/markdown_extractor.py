@@ -55,7 +55,7 @@ class MarkdownExtractor(BaseExtractor):
         current_header = None
         current_text = ""
         code_block_flag = False
-
+        sub_block_flag = False
         for line in lines:
             if line.startswith("```"):
                 code_block_flag = not code_block_flag
@@ -65,16 +65,42 @@ class MarkdownExtractor(BaseExtractor):
                 current_text += line + "\n"
                 continue
             header_match = re.match(r"^#+\s", line)
-            if header_match:
-                if current_header is not None:
-                    markdown_tups.append((current_header, current_text))
-
-                current_header = line
-                current_text = ""
+            sub_header_match = re.match(r"^#+\s+\d+", line)   # 匹配类似 # 2.2
+            # 既然用了最新的匹配方案，就永远不会走进入默认的header_match匹配了
+            # sub_block_flag 的作用 是标识出，不要进入 匹配 header_match 默认老的源代码的逻辑
+            if sub_header_match or sub_block_flag:
+                if sub_header_match:
+                    if current_header is not None:
+                        if current_text.strip() != "":
+                            markdown_tups.append((current_header, current_text))
+                            current_header = line
+                            current_text = ""
+                        else:
+                            current_header += "\n" + line   #内容为空的时候，合并追加头信息
+                    else:
+                        current_header = line
+                        current_text = ""
+                    sub_block_flag =  True
+                else:
+                    if line.strip():                   #内容非空的时候再追加
+                        current_text += re.sub(r"#", "", cast(str, line)).strip() + "\n"
             else:
-                current_text += line + "\n"
+                if header_match:
+                    if current_header is not None:
+                        if current_text.strip() != "":
+                            markdown_tups.append((current_header, current_text))
+                            current_header = line
+                            current_text = ""
+                        else:
+                            current_header += "\n" + line   #内容为空的时候，合并追加头信息
+                    else:
+                        current_header = line
+                        current_text = ""
+                else:
+                    if line.strip():                   #内容非空的时候再追加
+                        current_text += line + "\n"
+      
         markdown_tups.append((current_header, current_text))
-
         if current_header is not None:
             # pass linting, assert keys are defined
             markdown_tups = [

@@ -2,73 +2,92 @@ version: '3'
 services:
   # API service
   api:
+    # 使用名为 langgenius/dify-api 的 Docker 镜像，版本为 0.6.16
     image: langgenius/dify-api:0.6.16
     restart: always
     environment:
-      # Startup mode, 'api' starts the API server.
+      # Startup mode, 'api' starts the API server. 启动模式，设置为 api 启动 API 服务器
       MODE: api
       # The log level for the application. Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
+      # 应用的日志级别，支持 DEBUG、INFO、WARNING、ERROR、CRITICAL，这里设置为 INFO
       LOG_LEVEL: INFO
       # enable DEBUG mode to output more logs
       # DEBUG : true
       # A secret key that is used for securely signing the session cookie and encrypting sensitive information on the database. You can generate a strong key using `openssl rand -base64 42`.
+      # 用于安全签署会话 cookie 和加密数据库中的敏感信息的密钥。可以使用 openssl rand -base64 42 生成一个强密钥
       SECRET_KEY: sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U
       # The base URL of console application web frontend, refers to the Console base URL of WEB service if console domain is
       # different from api or web app domain.
       # example: http://cloud.dify.ai
+      # 控制台应用程序 Web 前端的基础 URL。如果控制台域名与 API 或 Web 应用域名不同，则指向 Web 服务的控制台基础 URL
       CONSOLE_WEB_URL: ''
       # Password for admin user initialization.
       # If left unset, admin user will not be prompted for a password when creating the initial admin account.
+      # 管理员用户初始化密码。如果未设置，则在创建初始管理员账户时不会提示输入密码
       INIT_PASSWORD: ''
       # The base URL of console application api server, refers to the Console base URL of WEB service if console domain is
       # different from api or web app domain.
       # example: http://cloud.dify.ai
+      # 控制台应用程序 API 服务器的基础 URL。如果控制台域名与 API 或 Web 应用域名不同，则指向 Web 服务的控制台基础 URL
       CONSOLE_API_URL: ''
       # The URL prefix for Service API endpoints, refers to the base URL of the current API service if api domain is
       # different from console domain.
       # example: http://api.dify.ai
+      # 服务 API 端点的 URL 前缀。如果 API 域名与控制台域名不同，则指向当前 API 服务的基础 URL
       SERVICE_API_URL: ''
       # The URL prefix for Web APP frontend, refers to the Web App base URL of WEB service if web app domain is different from
       # console or api domain.
       # example: http://udify.app
+      # Web 应用前端的 URL 前缀。如果 Web 应用域名与控制台或 API 域名不同，则指向 Web 服务的 Web 应用基础 URL
       APP_WEB_URL: ''
       # File preview or download Url prefix.
       # used to display File preview or download Url to the front-end or as Multi-model inputs;
       # Url is signed and has expiration time.
+      # 文件预览或下载 URL 前缀。用于向前端显示文件预览或下载 URL，或者作为多模型输入；URL 是签名的并具有过期时间
       FILES_URL: ''
       # File Access Time specifies a time interval in seconds for the file to be accessed.
-      # The default value is 300 seconds.
+      # The default value is 300 seconds. 文件访问时间，指定文件可访问的时间间隔（以秒为单位）。默认值为 300 秒
       FILES_ACCESS_TIMEOUT: 300
       # The maximum number of active requests for the application, where 0 means unlimited, should be a non-negative integer.
       APP_MAX_ACTIVE_REQUESTS: 0
       # When enabled, migrations will be executed prior to application startup and the application will start after the migrations have completed.
+      # 启用后，在应用程序启动前执行迁移，迁移完成后应用程序才会启动
       MIGRATION_ENABLED: 'true'
-      # The configurations of postgres database connection.
-      # It is consistent with the configuration in the 'db' service below.
+      # The configurations of postgres database connection. Postgres 数据库连接的配置
+      # It is consistent with the configuration in the 'db' service below. 与下面 db 服务中的配置一致
+      # 数据库用户名
       DB_USERNAME: postgres
+      # 数据库密码
       DB_PASSWORD: difyai123456
+      # 数据库主机名
       DB_HOST: db
       DB_PORT: 5432
+      # 数据库名称
       DB_DATABASE: dify
-      # The configurations of redis connection.
-      # It is consistent with the configuration in the 'redis' service below.
+      # The configurations of redis connection. Redis 连接的配置
+      # It is consistent with the configuration in the 'redis' service below. 与下面 redis 服务中的配置一致
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      # Redis 用户名
       REDIS_USERNAME: ''
+      # Redis 密码
       REDIS_PASSWORD: difyai123456
+      # 是否使用 SSL
       REDIS_USE_SSL: 'false'
-      # use redis db 0 for redis cache
+      # use redis db 0 for redis cache 使用 Redis 数据库 0 作为缓存
       REDIS_DB: 0
-      # The configurations of celery broker.
-      # Use redis as the broker, and redis db 1 for celery broker.
+      # The configurations of celery broker. Celery broker 的配置
+      # Use redis as the broker, and redis db 1 for celery broker. 使用 Redis 作为 broker，并使用 Redis 数据库 1
       CELERY_BROKER_URL: redis://:difyai123456@redis:6379/1
       # Specifies the allowed origins for cross-origin requests to the Web API, e.g. https://dify.app or * for all origins.
+      # 指定允许跨域请求 Web API 的来源，例如 https://dify.app 或 * 代表所有来源
       WEB_API_CORS_ALLOW_ORIGINS: '*'
       # Specifies the allowed origins for cross-origin requests to the console API, e.g. https://cloud.dify.ai or * for all origins.
+      # 指定允许跨域请求控制台 API 的来源，例如 https://cloud.dify.ai 或 * 代表所有来源
       CONSOLE_CORS_ALLOW_ORIGINS: '*'
-      # CSRF Cookie settings
-      # Controls whether a cookie is sent with cross-site requests,
-      # providing some protection against cross-site request forgery attacks
+      # CSRF Cookie settings CSRF Cookie 设置
+      # Controls whether a cookie is sent with cross-site requests, 控制是否在跨站请求时发送 Cookie
+      # providing some protection against cross-site request forgery attacks 提供一些防护以防止跨站请求伪造攻击
       #
       # Default: `SameSite=Lax, Secure=false, HttpOnly=true`
       # This default configuration supports same-origin requests using either HTTP or HTTPS,
@@ -78,13 +97,18 @@ services:
       # you must use the HTTPS protocol and set the configuration to `SameSite=None, Secure=true, HttpOnly=true`.
       #
       # The type of storage to use for storing user files. Supported values are `local` and `s3` and `azure-blob` and `google-storage`, Default: `local`
+      # 用于存储用户文件的存储类型。支持的值有 local、s3、azure-blob 和 google-storage，默认值为 local
       STORAGE_TYPE: local
       # The path to the local storage directory, the directory relative the root path of API service codes or absolute path. Default: `storage` or `/home/john/storage`.
       # only available when STORAGE_TYPE is `local`.
+      # 本地存储目录的路径，相对于 API 服务代码的根路径或绝对路径。默认值为 storage 或 /home/john/storage。
+      # 仅在 STORAGE_TYPE 为 local 时可用
       STORAGE_LOCAL_PATH: storage
-      # The S3 storage configurations, only available when STORAGE_TYPE is `s3`.
+      # The S3 storage configurations, only available when STORAGE_TYPE is `s3`. S3 存储配置，仅在 STORAGE_TYPE 为 s3 时可用
       S3_USE_AWS_MANAGED_IAM: 'false'
+      # S3 端点 URL
       S3_ENDPOINT: 'https://xxx.r2.cloudflarestorage.com'
+      # S3 存储桶名称
       S3_BUCKET_NAME: 'difyai'
       S3_ACCESS_KEY: 'ak-difyai'
       S3_SECRET_KEY: 'sk-difyai'
@@ -224,54 +248,82 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
+    # 使用名为 langgenius/dify-api 的 Docker 镜像，版本为 0.6.16，启动 Celery worker 服务以处理任务队列
     image: langgenius/dify-api:0.6.16
     restart: always
     environment:
-      CONSOLE_WEB_URL: ''
-      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+      CONSOLE_WEB_URL: '' # 控制台 Web 应用程序的基础 URL，此处未设置值
+      # Startup mode, 'worker' starts the Celery worker for processing the queue. 
+      # 启动模式，设置为 worker 启动 Celery worker 以处理任务队列
       MODE: worker
 
       # --- All the configurations below are the same as those in the 'api' service. ---
 
       # The log level for the application. Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
+      # 应用的日志级别，支持 DEBUG、INFO、WARNING、ERROR、CRITICAL，这里设置为 INFO
       LOG_LEVEL: INFO
       # A secret key that is used for securely signing the session cookie and encrypting sensitive information on the database. You can generate a strong key using `openssl rand -base64 42`.
       # same as the API service
+      # 用于安全签署会话 cookie 和加密数据库中的敏感信息的密钥。可以使用 openssl rand -base64 42 生成一个强密钥
       SECRET_KEY: sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U
       # The configurations of postgres database connection.
       # It is consistent with the configuration in the 'db' service below.
+      #数据库用户名
       DB_USERNAME: postgres
+      # 数据库密码
       DB_PASSWORD: difyai123456
+      # 数据库主机名
       DB_HOST: db
+      # 数据库端口
       DB_PORT: 5432
+      # 数据库名称
       DB_DATABASE: dify
-      # The configurations of redis cache connection.
+      # The configurations of redis cache connection. Redis 缓存连接的配置
+      # Redis 主机名
       REDIS_HOST: redis
+      # Redis 端口
       REDIS_PORT: 6379
+      # Redis 用户名
       REDIS_USERNAME: ''
+      # Redis 密码
       REDIS_PASSWORD: difyai123456
+      # 使用 Redis 数据库 0
       REDIS_DB: 0
+      # 是否使用 SSL
       REDIS_USE_SSL: 'false'
-      # The configurations of celery broker.
+      # The configurations of celery broker. Celery broker 的配置，使用 Redis 作为 broker，并使用 Redis 数据库 1
       CELERY_BROKER_URL: redis://:difyai123456@redis:6379/1
       # The type of storage to use for storing user files. Supported values are `local` and `s3` and `azure-blob` and `google-storage`, Default: `local`
+      # 用于存储用户文件的存储类型，支持 local、s3、azure-blob 和 google-storage，默认值为 local
       STORAGE_TYPE: local
+      # 本地存储路径
       STORAGE_LOCAL_PATH: storage
-      # The S3 storage configurations, only available when STORAGE_TYPE is `s3`.
+      # The S3 storage configurations, only available when STORAGE_TYPE is `s3`. S3 存储配置，仅在 STORAGE_TYPE 为 s3 时可用
       S3_USE_AWS_MANAGED_IAM: 'false'
+      # S3 端点 URL
       S3_ENDPOINT: 'https://xxx.r2.cloudflarestorage.com'
+      # ：S3 存储桶名称
       S3_BUCKET_NAME: 'difyai'
+      # S3 访问密钥
       S3_ACCESS_KEY: 'ak-difyai'
+      # S3 密钥
       S3_SECRET_KEY: 'sk-difyai'
+      # S3 存储区域
       S3_REGION: 'us-east-1'
-      # The Azure Blob storage configurations, only available when STORAGE_TYPE is `azure-blob`.
+      # The Azure Blob storage configurations, only available when STORAGE_TYPE is `azure-blob`. Azure Blob 存储配置，仅在 STORAGE_TYPE 为 azure-blob 时可用
+      # Azure Blob 存储账户名称
       AZURE_BLOB_ACCOUNT_NAME: 'difyai'
+      # Azure Blob 存储账户密钥
       AZURE_BLOB_ACCOUNT_KEY: 'difyai'
+      # Azure Blob 容器名称
       AZURE_BLOB_CONTAINER_NAME: 'difyai-container'
+      # Azure Blob 存储账户 URL
       AZURE_BLOB_ACCOUNT_URL: 'https://<your_account_name>.blob.core.windows.net'
-      # The Google storage configurations, only available when STORAGE_TYPE is `google-storage`.
+      # The Google storage configurations, only available when STORAGE_TYPE is `google-storage`. Google 存储配置，仅在 STORAGE_TYPE 为 google-storage 时可用
+      # Google 存储桶名称
       GOOGLE_STORAGE_BUCKET_NAME: 'yout-bucket-name'
       # if you want to use Application Default Credentials, you can leave GOOGLE_STORAGE_SERVICE_ACCOUNT_JSON_BASE64 empty.
+      # Google 服务账户 JSON 的 base64 编码字符串。如果要使用应用默认凭据，可以将其留空
       GOOGLE_STORAGE_SERVICE_ACCOUNT_JSON_BASE64: 'your-google-service-account-json-base64-string'
       # The Alibaba Cloud OSS configurations, only available when STORAGE_TYPE is `aliyun-oss`
       ALIYUN_OSS_BUCKET_NAME: 'your-bucket-name'
@@ -288,30 +340,32 @@ services:
       TENCENT_COS_SCHEME: 'your-scheme'
       # The type of vector store to use. Supported values are `weaviate`, `qdrant`, `milvus`, `relyt`, `pgvector`, `chroma`, 'opensearch', 'tidb_vector'.
       VECTOR_STORE: weaviate
-      # The Weaviate endpoint URL. Only available when VECTOR_STORE is `weaviate`.
+      # The Weaviate endpoint URL. Only available when VECTOR_STORE is `weaviate`. Weaviate 配置，仅在 VECTOR_STORE 为 weaviate 时可用
+      # Weaviate 端点 URL
       WEAVIATE_ENDPOINT: http://weaviate:8080
-      # The Weaviate API key.
+      # The Weaviate API key. Weaviate API 密钥
       WEAVIATE_API_KEY: WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih
-      # The Qdrant endpoint URL. Only available when VECTOR_STORE is `qdrant`.
+      # The Qdrant endpoint URL. Only available when VECTOR_STORE is `qdrant`. Qdrant 配置，仅在 VECTOR_STORE 为 qdrant 时可用
+      # Qdrant 端点 URL
       QDRANT_URL: http://qdrant:6333
-      # The Qdrant API key.
+      # The Qdrant API key. Qdrant API 密钥
       QDRANT_API_KEY: difyai123456
-      # The Qdrant client timeout setting.
+      # The Qdrant client timeout setting. Qdrant 客户端超时设置
       QDRANT_CLIENT_TIMEOUT: 20
-      # The Qdrant client enable gRPC mode.
+      # The Qdrant client enable gRPC mode. 启用 gRPC 模式
       QDRANT_GRPC_ENABLED: 'false'
-      # The Qdrant server gRPC mode PORT.
+      # The Qdrant server gRPC mode PORT. Qdrant gRPC 服务器端口
       QDRANT_GRPC_PORT: 6334
-      # Milvus configuration Only available when VECTOR_STORE is `milvus`.
-      # The milvus host.
+      # Milvus configuration Only available when VECTOR_STORE is `milvus`. Milvus 配置，仅在 VECTOR_STORE 为 milvus 时可用
+      # The milvus host. Milvus 主机
       MILVUS_HOST: 127.0.0.1
-      # The milvus host.
+      # The milvus host. Milvus 端口
       MILVUS_PORT: 19530
-      # The milvus username.
+      # The milvus username. Milvus 用户名
       MILVUS_USER: root
-      # The milvus password.
+      # The milvus password. Milvus 密码
       MILVUS_PASSWORD: Milvus
-      # The milvus tls switch.
+      # The milvus tls switch. 是否启用 TLS
       MILVUS_SECURE: 'false'
       # Mail configuration, support: resend
       MAIL_TYPE: ''
@@ -323,14 +377,17 @@ services:
       SMTP_PASSWORD: ''
       SMTP_USE_TLS: 'true'
       SMTP_OPPORTUNISTIC_TLS: 'false'
-      # the api-key for resend (https://resend.com)
+      # the api-key for resend (https://resend.com) Resend 配置
+      # Resend API 密钥
       RESEND_API_KEY: ''
+      # Resend API URL
       RESEND_API_URL: https://api.resend.com
-      # relyt configurations
+      # relyt configurations Relyt 配置
       RELYT_HOST: db
       RELYT_PORT: 5432
       RELYT_USER: postgres
       RELYT_PASSWORD: difyai123456
+      # Relyt 数据库名称
       RELYT_DATABASE: postgres
       # tencent configurations
       TENCENT_VECTOR_DB_URL: http://127.0.0.1
@@ -347,10 +404,12 @@ services:
       OPENSEARCH_PASSWORD: admin
       OPENSEARCH_SECURE: 'true'
       # pgvector configurations
+      # Pgvector 主机
       PGVECTOR_HOST: pgvector
       PGVECTOR_PORT: 5432
       PGVECTOR_USER: postgres
       PGVECTOR_PASSWORD: difyai123456
+      # Pgvector 数据库名称
       PGVECTOR_DATABASE: dify
       # tidb vector configurations
       TIDB_VECTOR_HOST: tidb
@@ -371,26 +430,34 @@ services:
       CHROMA_DATABASE: default_database
       CHROMA_AUTH_PROVIDER: chromadb.auth.token_authn.TokenAuthClientProvider
       CHROMA_AUTH_CREDENTIALS: xxxxxx
-      # Notion import configuration, support public and internal
+      # Notion import configuration, support public and internal Notion 导入配置，支持 public 和 internal
+      # Notion 集成类型
       NOTION_INTEGRATION_TYPE: public
+      # Notion 客户端密钥
       NOTION_CLIENT_SECRET: you-client-secret
+      # Notion 客户端 ID
       NOTION_CLIENT_ID: you-client-id
+      # Notion 内部密钥
       NOTION_INTERNAL_SECRET: you-internal-secret
-      # Indexing configuration
+      # Indexing configuration 索引最大分段令牌长度
       INDEXING_MAX_SEGMENTATION_TOKENS_LENGTH: 1000
+    # 依赖项配置，指定此服务依赖于 db 和 redis 服务
     depends_on:
       - db
       - redis
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - ./volumes/app/storage:/app/api/storage
+    # 网络配置，指定此服务连接到 ssrf_proxy_network 和 default 网络
     networks:
       - ssrf_proxy_network
       - default
 
   # Frontend web application.
   web:
+    # 使用名为 langgenius/dify-web 的 Docker 镜像，版本为 0.6.9，启动前端 Web 应用程序
     image: langgenius/dify-web:0.6.16
+    # 确保容器在任何情况下（例如崩溃、系统重启等）都自动重启
     restart: always
     environment:
       # The base URL of console application api server, refers to the Console base URL of WEB service if console domain is
@@ -403,105 +470,138 @@ services:
       APP_API_URL: ''
       # The DSN for Sentry error reporting. If not set, Sentry error reporting will be disabled.
       SENTRY_DSN: ''
-    # uncomment to expose dify-web port to host
+    # uncomment to expose dify-web port to host 端口配置，取消注释以将 dify-web 端口暴露给主机
     # ports:
     #   - "3000:3000"
 
   # The postgres database.
   db:
+    # 使用名为 postgres 的 Docker 镜像，版本为 15-alpine，启动 PostgreSQL 数据库
     image: postgres:15-alpine
     restart: always
+    # 定义容器运行时的环境变量
     environment:
+      # 默认的 PostgreSQL 用户名 
       PGUSER: postgres
-      # The password for the default postgres user.
+      # The password for the default postgres user. 默认的 PostgreSQL 用户密码
       POSTGRES_PASSWORD: difyai123456
-      # The name of the default postgres database.
+      # The name of the default postgres database. 默认的 PostgreSQL 数据库名称。
       POSTGRES_DB: dify
-      # postgres data directory
+      # postgres data directory PostgreSQL 数据目录
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
+      # 卷配置，将命名卷 ./volumes/db/data 挂载到容器中的 /var/lib/postgresql/data 目录，以持久化存储 PostgreSQL 数据
       - ./volumes/db/data:/var/lib/postgresql/data
       # notice!: if you use windows-wsl2, postgres may not work properly due to the ntfs issue.you can use volumes to mount the data directory to the host.
       # if you use the following config, you need to uncomment the volumes configuration below at the end of the file.
       # - postgres:/var/lib/postgresql/data
-    # uncomment to expose db(postgresql) port to host
+    # uncomment to expose db(postgresql) port to host 端口配置，取消注释以将 PostgreSQL 端口暴露给主机
     # ports:
     #   - "5432:5432"
+    # 健康检查，使用 pg_isready 命令测试 PostgreSQL 的健康状态
     healthcheck:
       test: [ "CMD", "pg_isready" ]
+      # 健康检查的时间间隔，每 1 秒检查一次
       interval: 1s
+      # 健康检查的超时时间，3 秒后超时
       timeout: 3s
+      # 健康检查的重试次数，最多重试 30 次
       retries: 30
 
   # The redis cache.
   redis:
+    # 使用名为 redis 的 Docker 镜像，版本为 6-alpine，启动 Redis 缓存服务
     image: redis:6-alpine
     restart: always
     volumes:
-      # Mount the redis data directory to the container.
+      # Mount the redis data directory to the container. 将本地目录 ./volumes/redis/data 挂载到容器中的 /data 目录，以持久化存储 Redis 数据
       - ./volumes/redis/data:/data
-    # Set the redis password when startup redis server.
+    # Set the redis password when startup redis server. 启动 Redis 服务器时设置密码
     command: redis-server --requirepass difyai123456
     healthcheck:
+      # 健康检查，使用 redis-cli ping 命令测试 Redis 的健康状态
       test: [ "CMD", "redis-cli", "ping" ]
-    # uncomment to expose redis port to host
+    # uncomment to expose redis port to host 端口配置，取消注释以将 Redis 端口暴露给主机
     # ports:
     #   - "6379:6379"
 
   # The Weaviate vector store.
   weaviate:
+    # 使用名为 semitechnologies/weaviate 的 Docker 镜像，版本为 1.19.0，启动 Weaviate 向量存储服务
     image: semitechnologies/weaviate:1.19.0
     restart: always
     volumes:
-      # Mount the Weaviate data directory to the container.
+      # Mount the Weaviate data directory to the container. 将本地目录 ./volumes/weaviate 挂载到容器中的 /var/lib/weaviate 目录，以持久化存储 Weaviate 数据
       - ./volumes/weaviate:/var/lib/weaviate
     environment:
       # The Weaviate configurations
       # You can refer to the [Weaviate](https://weaviate.io/developers/weaviate/config-refs/env-vars) documentation for more information.
+      # Weaviate 配置项，设置默认查询限制为 25
       QUERY_DEFAULTS_LIMIT: 25
+      # 禁用匿名访问
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'false'
+      # 设置数据持久化路径为 /var/lib/weaviate
       PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      # 设置默认的向量化模块为 none
       DEFAULT_VECTORIZER_MODULE: 'none'
+      # 设置集群主机名为 node1
       CLUSTER_HOSTNAME: 'node1'
+      # 启用 API 密钥身份验证
       AUTHENTICATION_APIKEY_ENABLED: 'true'
+      # 允许的 API 密钥为 WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih
       AUTHENTICATION_APIKEY_ALLOWED_KEYS: 'WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih'
+      # API 密钥用户为 hello@dify.ai
       AUTHENTICATION_APIKEY_USERS: 'hello@dify.ai'
+      # 启用管理员列表授权
       AUTHORIZATION_ADMINLIST_ENABLED: 'true'
+      # 管理员列表用户为 hello@dify.ai
       AUTHORIZATION_ADMINLIST_USERS: 'hello@dify.ai'
-    # uncomment to expose weaviate port to host
+    # uncomment to expose weaviate port to host 端口配置，取消注释以将 Weaviate 端口暴露给主机
     # ports:
     #  - "8080:8080"
 
   # The DifySandbox
   sandbox:
+    # 使用名为 langgenius/dify-sandbox 的 Docker 镜像，版本为 0.2.0，启动 DifySandbox 服务
     image: langgenius/dify-sandbox:0.2.1
     restart: always
     environment:
       # The DifySandbox configurations
       # Make sure you are changing this key for your deployment with a strong key.
-      # You can generate a strong key using `openssl rand -base64 42`.
+      # You can generate a strong key using `openssl rand -base64 42`. 
+      # DifySandbox 配置项，设置 API 密钥为 dify-sandbox。确保在部署时使用强密钥，可以使用 openssl rand -base64 42 生成
       API_KEY: dify-sandbox
+      # 设置 Gin 框架的运行模式为 release
       GIN_MODE: 'release'
+      # 设置工作超时时间为 15 秒
       WORKER_TIMEOUT: 15
+      # 启用网络访问
       ENABLE_NETWORK: 'true'
+      # 设置 HTTP 代理为 http://ssrf_proxy:3128
       HTTP_PROXY: 'http://ssrf_proxy:3128'
+      # 设置 HTTPS 代理为 http://ssrf_proxy:3128
       HTTPS_PROXY: 'http://ssrf_proxy:3128'
       SANDBOX_PORT: 8194
     volumes:
+      # 将本地目录 ./volumes/sandbox/dependencies 挂载到容器中的 /dependencies 目录，以存储依赖项
       - ./volumes/sandbox/dependencies:/dependencies
     networks:
+      # 网络配置，指定此服务连接到 ssrf_proxy_network 网络
       - ssrf_proxy_network
 
   # ssrf_proxy server
   # for more information, please refer to
   # https://docs.dify.ai/learn-more/faq/self-host-faq#id-18.-why-is-ssrf_proxy-needed
   ssrf_proxy:
+    # 使用名为 ubuntu/squid 的 Docker 镜像，最新版本，启动 SSRF 代理服务器 更多信息请参考 Dify 文档
     image: ubuntu/squid:latest
     restart: always
     volumes:
       # pls clearly modify the squid.conf file to fit your network environment.
+      # 将本地目录 ./volumes/ssrf_proxy/squid.conf 挂载到容器中的 /etc/squid/squid.conf 文件。请明确修改 squid.conf 文件以适应您的网络环境
       - ./volumes/ssrf_proxy/squid.conf:/etc/squid/squid.conf
     networks:
+      # 网络配置，指定此服务连接到 ssrf_proxy_network 和 default 网络
       - ssrf_proxy_network
       - default
   # Qdrant vector store.

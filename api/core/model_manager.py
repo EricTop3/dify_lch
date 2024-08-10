@@ -211,6 +211,7 @@ class ModelInstance:
             raise Exception("Model type instance is not RerankModel")
 
         self.model_type_instance = cast(RerankModel, self.model_type_instance)
+        # 轮询调用重排序模型，获得重排序得分，并基于得分进行排序
         return self._round_robin_invoke(
             function=self.model_type_instance.invoke,
             model=self.model,
