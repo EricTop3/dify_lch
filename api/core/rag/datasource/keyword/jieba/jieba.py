@@ -86,7 +86,7 @@ class Jieba(BaseKeyword):
         keyword_table = self._get_dataset_keyword_table()
 
         k = kwargs.get('top_k', 4)
-        # 利用 query 生成的关键词匹配关键词表中数据块并进行排序
+        # 利用 query 生成的 关键词 匹配 关键词表 中数据块并进行排序
         sorted_chunk_indices = self._retrieve_ids_by_query(keyword_table, query, k)
         # 根据检索到的数据块查询数据库获取信息构造 Document 列表
         documents = []
@@ -202,9 +202,11 @@ class Jieba(BaseKeyword):
 
     def _retrieve_ids_by_query(self, keyword_table: dict, query: str, k: int = 4):
         keyword_table_handler = JiebaKeywordTableHandler()
+        # 从查询语句中提取关键词
         keywords = keyword_table_handler.extract_keywords(query)
 
         # go through text chunks in order of most matching keywords
+        # 与关键词表进行匹配,从而 确定 匹配的数据块
         chunk_indices_count: dict[str, int] = defaultdict(int)
         keywords = [keyword for keyword in keywords if keyword in set(keyword_table.keys())]
         for keyword in keywords:

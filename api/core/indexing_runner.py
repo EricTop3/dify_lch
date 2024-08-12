@@ -68,13 +68,13 @@ class IndexingRunner:
                     first()
                 index_type = dataset_document.doc_form
                 index_processor = IndexProcessorFactory(index_type).init_index_processor()
-                # extract
+                # extract 提取文档信息 这里就需要适配各种文档格式，提取各种富文本中的文字信息
                 text_docs = self._extract(index_processor, dataset_document, processing_rule.to_dict())
 
-                # transform
+                # transform 将文档内容切片，单个文档 按照 处理规则切分多个 chunks
                 documents = self._transform(index_processor, dataset, text_docs, dataset_document.doc_language,
                                             processing_rule.to_dict())
-                # save segment
+                # save segment 存储片段 将最终切片后的 chunks 构造 document_segment 入库
                 self._load_segments(dataset, dataset_document, documents)
 
                 # load
@@ -127,13 +127,14 @@ class IndexingRunner:
 
             index_type = dataset_document.doc_form
             index_processor = IndexProcessorFactory(index_type).init_index_processor()
-            # extract
+            # extract 提取数据
             text_docs = self._extract(index_processor, dataset_document, processing_rule.to_dict())
 
-            # transform
+            # transform 数据转换 完成数据清理（除了无效符号、多余的空格、URL和电子邮件地址等）、分割等数据加工（给数据增加一些唯一识别码）
             documents = self._transform(index_processor, dataset, text_docs, dataset_document.doc_language,
                                         processing_rule.to_dict())
-            # save segment
+            # save segment 数据入库 经过前面的处理，数据已经比较合理，到了可以灌库的阶段
+            # 不仅支持向量数据库灌库，还支持关键字灌库（到了jieba）
             self._load_segments(dataset, dataset_document, documents)
 
             # load
@@ -434,7 +435,7 @@ class IndexingRunner:
         Get the NodeParser object according to the processing rule.
         """
         if processing_rule.mode == "custom":
-            # The user-defined segmentation rule
+            # The user-defined segmentation rule 自定义
             rules = json.loads(processing_rule.rules)
             segmentation = rules["segmentation"]
             max_segmentation_tokens_length = dify_config.INDEXING_MAX_SEGMENTATION_TOKENS_LENGTH
@@ -458,7 +459,7 @@ class IndexingRunner:
                 embedding_model_instance=embedding_model_instance
             )
         else:
-            # Automatic segmentation
+            # Automatic segmentation 自动分段
             character_splitter = EnhanceRecursiveCharacterTextSplitter.from_encoder(
                 chunk_size=DatasetProcessRule.AUTOMATIC_RULES['segmentation']['max_tokens'],
                 chunk_overlap=DatasetProcessRule.AUTOMATIC_RULES['segmentation']['chunk_overlap'],
@@ -715,7 +716,7 @@ class IndexingRunner:
                 DatasetDocument.indexing_latency: indexing_end_at - indexing_start_at,
             }
         )
-    # 处理关键字索引 创建关键字索引 和相关文档段状态的更新
+    # 处理关键字索引 提取文档中的关键字创建关键字索引 和相关文档段状态的更新
     # 目的是在 Flask 应用的上下文中处理关键字索引
     # 这个方法接收四个参数：flask_app（Flask 应用实例），dataset_id（数据集的 ID），document_id（文档的 ID），以及documents（文档对象列表）
     def _process_keyword_index(self, flask_app, dataset_id, document_id, documents):
@@ -741,7 +742,7 @@ class IndexingRunner:
 
                 db.session.commit()
 
-    # 处理文档块的索引加载 对文档块进行索引处理，并更新数据库状态 
+    # 处理文档块的 索引加载 对文档块进行 索引处理，并更新数据库状态
     # 目的是在处理文档块时，计算文档的 tokens 数量，加载索引，并更新数据库中的文档段状态
     def _process_chunk(self, flask_app, index_processor, chunk_documents, dataset, dataset_document,
                        embedding_model_instance):

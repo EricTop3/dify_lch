@@ -57,7 +57,7 @@ def document_indexing_task(dataset_id: str, document_ids: list):
                 db.session.add(document)
         db.session.commit()
         return
-
+    # 实现上根据任务参数中的 document_ids 从数据库中拿到所有的 documents
     for document_id in document_ids:
         logging.info(click.style('Start process document: {}'.format(document_id), fg='green'))
 

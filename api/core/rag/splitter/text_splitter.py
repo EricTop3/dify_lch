@@ -43,11 +43,11 @@ def _split_text_with_regex(
 
 class TextSplitter(BaseDocumentTransformer, ABC):
     """Interface for splitting text into chunks."""
-
+    # 分词是将 长文本 分解为以 字词句 等更 小粒度 分析单元的方法（分解为以字词为单位的数据结构）
     def __init__(
             self,
-            chunk_size: int = 4000,
-            chunk_overlap: int = 200,
+            chunk_size: int = 4000,                           # 文本分割的滑窗长度
+            chunk_overlap: int = 200,                         # 重叠滑窗长度
             length_function: Callable[[str], int] = len,
             keep_separator: bool = False,
             add_start_index: bool = False,
@@ -68,7 +68,7 @@ class TextSplitter(BaseDocumentTransformer, ABC):
             )
         self._chunk_size = chunk_size
         self._chunk_overlap = chunk_overlap
-        self._length_function = length_function
+        self._length_function = length_function    # length_function 作用是 通过 Tokenizer 来计算字符串占用的 token 个数
         self._keep_separator = keep_separator
         self._add_start_index = add_start_index
 
@@ -411,7 +411,7 @@ class Tokenizer:
     tokens_per_chunk: int
     decode: Callable[[list[int]], str]
     encode: Callable[[str], list[int]]
-
+# Tokenizer（分词器）
 
 def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> list[str]:
     """Split incoming text and return chunks using tokenizer."""
@@ -427,15 +427,18 @@ def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> list[str]:
         chunk_ids = input_ids[start_idx:cur_idx]
     return splits
 
-
+# TokenTextSplitter 是一种字节对编码（Byte Pair Encoder，BPE）方法，
+# 而BPE是一种自然语言处理领域中被经常使用的数据压缩算法。TokenTextSplitter 来自 tiktoken 库，
+# tiktoken 库最先被用在 GPT-2 中，并随之被开源 
+# https://zhuanlan.zhihu.com/p/638929185
 class TokenTextSplitter(TextSplitter):
     """Splitting text to tokens using model tokenizer."""
 
     def __init__(
             self,
-            encoding_name: str = "gpt2",
+            encoding_name: str = "gpt2",                                         # 使用的编码
             model_name: Optional[str] = None,
-            allowed_special: Union[Literal["all"], Set[str]] = set(),
+            allowed_special: Union[Literal["all"], Set[str]] = set(),            # 特殊token的使用许可
             disallowed_special: Union[Literal["all"], Collection[str]] = "all",
             **kwargs: Any,
     ) -> None:
@@ -476,6 +479,7 @@ class TokenTextSplitter(TextSplitter):
         return split_text_on_tokens(text=text, tokenizer=tokenizer)
 
 
+# 重叠滑窗分句方法
 class RecursiveCharacterTextSplitter(TextSplitter):
     """Splitting text by recursively look at characters.
 
@@ -511,7 +515,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 separator = _s
                 new_separators = separators[i + 1:]
                 break
-        # 按照标识符进行切分
+        # 按照 标识符(分割符) 进行切分
         splits = _split_text_with_regex(text, separator, self._keep_separator)
         # Now go merging things, recursively splitting longer texts.
         _good_splits = []

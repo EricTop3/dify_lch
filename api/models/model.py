@@ -1176,6 +1176,7 @@ class EndUser(UserMixin, db.Model):
 
 
 class Site(db.Model):
+    # 站点表
     __tablename__ = 'sites'
     __table_args__ = (
         db.PrimaryKeyConstraint('id', name='site_pkey'),

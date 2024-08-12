@@ -179,13 +179,13 @@ class MilvusVector(BaseVector):
 
     def search_by_vector(self, query_vector: list[float], **kwargs: Any) -> list[Document]:
 
-        # Set search parameters.
+        # Set search parameters. 调用 Milvus 客户端的 search 方法进行检索
         results = self._client.search(collection_name=self._collection_name,
                                       data=[query_vector],
                                       limit=kwargs.get('top_k', 4),
                                       output_fields=[Field.CONTENT_KEY.value, Field.METADATA_KEY.value],
                                       )
-        # Organize results.
+        # Organize results. 构造结果为 Document 列表
         docs = []
         for result in results[0]:
             metadata = result['entity'].get(Field.METADATA_KEY.value)

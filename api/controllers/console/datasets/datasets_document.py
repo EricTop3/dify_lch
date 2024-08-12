@@ -282,15 +282,21 @@ class DatasetInitApi(Resource):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:
             raise Forbidden()
-
+        # 这些参数对应了前端创建知识库时的参数配置信息
         parser = reqparse.RequestParser()
+        # 索引方式，提供了两种方式：[ 'high_quality', 'economy' ]，其中高质量会使用Embedding模型做向量索引
         parser.add_argument('indexing_technique', type=str, choices=Dataset.INDEXING_TECHNIQUE_LIST, required=True,
                             nullable=False, location='json')
+        # 数据源，前端上传文档之后的文件id，用于原始文档获取
         parser.add_argument('data_source', type=dict, required=True, nullable=True, location='json')
+        # 数据的前处理规则配置
         parser.add_argument('process_rule', type=dict, required=True, nullable=True, location='json')
+        # 文档格式
         parser.add_argument('doc_form', type=str, default='text_model', required=False, nullable=False, location='json')
+        # 文档语言
         parser.add_argument('doc_language', type=str, default='English', required=False, nullable=False,
                             location='json')
+        # 检索模型，用于设置检索时搜索方式、各种参数
         parser.add_argument('retrieval_model', type=dict, required=False, nullable=False,
                             location='json')
         args = parser.parse_args()

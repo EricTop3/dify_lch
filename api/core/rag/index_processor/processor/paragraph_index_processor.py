@@ -22,7 +22,7 @@ class ParagraphIndexProcessor(BaseIndexProcessor):
                                              is_automatic=kwargs.get('process_rule_mode') == "automatic")
 
         return text_docs
-    # 对文档进行 预处理 和 分割，以便后续的 索引 或 其它处理步骤 可以更有效地处理文档的各个部分
+    # 对文档进行 预处理(清洗) 和 分割，以便后续的 索引 或 其它处理步骤 可以更有效地处理文档的各个部分
     def transform(self, documents: list[Document], **kwargs) -> list[Document]:
         # Split the text documents into nodes.
         # 获取分割器：根据传入的处理规则 process_rule 和 嵌入模型实例 embedding_model_instance 获取文档分割器（splitter）

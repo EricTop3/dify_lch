@@ -94,6 +94,7 @@ class Vector:
 
     def create(self, texts: list = None, **kwargs):
         if texts:
+            # 向量索引的 向量化 在 Vector 中使用 embedding 模型将文档向量化后做索引
             embeddings = self._embeddings.embed_documents([document.page_content for document in texts])
             self._vector_processor.create(
                 texts=texts,

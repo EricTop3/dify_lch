@@ -96,6 +96,7 @@ class ExtractProcessor:
                 etl_type = dify_config.ETL_TYPE
                 unstructured_api_url = dify_config.UNSTRUCTURED_API_URL
                 unstructured_api_key = dify_config.UNSTRUCTURED_API_KEY
+                # 根据文件后缀名 调用 不同的 文档解析器 提取 文档内容
                 if etl_type == 'Unstructured':
                     if file_extension == '.xlsx' or file_extension == '.xls':
                         extractor = ExcelExtractor(file_path)

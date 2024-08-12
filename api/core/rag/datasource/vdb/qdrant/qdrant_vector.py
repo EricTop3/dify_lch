@@ -384,6 +384,7 @@ class QdrantVector(BaseVector):
                 )
             ]
         )
+        # 调用 qdrant 客户端执行 BM25 检索
         response = self._client.scroll(
             collection_name=self._collection_name,
             scroll_filter=scroll_filter,

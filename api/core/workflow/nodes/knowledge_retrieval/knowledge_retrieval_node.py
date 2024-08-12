@@ -239,14 +239,14 @@ class KnowledgeRetrievalNode(BaseNode):
 
     def _fetch_model_config(self, node_data: KnowledgeRetrievalNodeData) -> tuple[
         ModelInstance, ModelConfigWithCredentialsEntity]:
-        """
+        """ 从 config 中获取模型名和对应的提供商
         Fetch model config
         :param node_data: node data
         :return:
         """
         model_name = node_data.single_retrieval_config.model.name
         provider_name = node_data.single_retrieval_config.model.provider
-
+        # 构造大模型对象，后续可以直接调用
         model_manager = ModelManager()
         model_instance = model_manager.get_model_instance(
             tenant_id=self.tenant_id,

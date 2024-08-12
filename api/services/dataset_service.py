@@ -790,6 +790,8 @@ class DocumentService:
                             documents.append(document)
                             duplicate_document_ids.append(document.id)
                             continue
+                    # 构造 Document 入库，这里的 Document 是知识库中的单个文档（我们创建知识库的时候可以上传多个文档），
+                    # 也就是一个 Dataset 实际上包含了多个 Document，Document 的信息就包含了文档信息以及数据处理相关的参数
                     document = DocumentService.build_document(
                         dataset, dataset_process_rule.id,
                         document_data["data_source"]["type"],
@@ -838,6 +840,8 @@ class DocumentService:
                                 "notion_page_icon": page['page_icon'],
                                 "type": page['type']
                             }
+                            # 构造 Document 入库，这里的 Document 是知识库中的单个文档（我们创建知识库的时候可以上传多个文档），
+                            # 也就是一个 Dataset 实际上包含了多个 Document，Document 的信息就包含了文档信息以及数据处理相关的参数
                             document = DocumentService.build_document(
                                 dataset, dataset_process_rule.id,
                                 document_data["data_source"]["type"],
@@ -886,7 +890,7 @@ class DocumentService:
                     position += 1
             db.session.commit()
 
-            # trigger async task
+            # trigger async task 启动异步索引任务，针对知识库中的每个文档创建索引
             if document_ids:
                 document_indexing_task.delay(dataset.id, document_ids)
             if duplicate_document_ids:
@@ -1096,6 +1100,7 @@ class DocumentService:
                 }
                 retrieval_model = default_retrieval_model
         # save dataset
+        # 构造 Dataset 入库，这里的Dataset就是知识库的信息总览，包含了该知识库的 embedding 模型信息、检索模型等信息
         dataset = Dataset(
             tenant_id=tenant_id,
             name='',
@@ -1110,7 +1115,7 @@ class DocumentService:
 
         db.session.add(dataset)
         db.session.flush()
-
+        # 构造document以及启动异步处理任务
         documents, batch = DocumentService.save_document_with_dataset_id(dataset, document_data, account)
 
         cut_length = 18

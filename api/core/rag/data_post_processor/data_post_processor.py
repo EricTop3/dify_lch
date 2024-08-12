@@ -13,6 +13,9 @@ from core.rag.rerank.weight_rerank import WeightRerankRunner
 
 class DataPostProcessor:
     """Interface for data post-processing document.
+    各种检索方式检索到匹配的文档片段 可以视作一个粗筛的过程，
+    之后需要在做一个 rerank 从所有检索片段中进一步精筛来获取最匹配的文档片段
+    也就是由 DataPostProcessor 来实现
     """
 
     def __init__(self, tenant_id: str, reranking_mode: str,
@@ -24,9 +27,11 @@ class DataPostProcessor:
     def invoke(self, query: str, documents: list[Document], score_threshold: Optional[float] = None,
                top_n: Optional[int] = None, user: Optional[str] = None) -> list[Document]:
         if self.rerank_runner:
+            # 调用rerank模型做精筛
             documents = self.rerank_runner.run(query, documents, score_threshold, top_n, user)
 
         if self.reorder_runner:
+            # 将精筛的文档片段做一下乱序，乱序的策略是奇数位+偶数位的倒置 ：[0, 1, 2, 3, 4, 5] -> [0, 2, 4, 5, 3, 1]
             documents = self.reorder_runner.run(documents)
 
         return documents

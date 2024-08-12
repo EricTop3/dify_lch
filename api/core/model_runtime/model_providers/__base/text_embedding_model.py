@@ -12,6 +12,10 @@ from core.model_runtime.model_providers.__base.ai_model import AIModel
 class TextEmbeddingModel(AIModel):
     """
     Model class for text embedding model.
+    Text Embedding 文本向量化
+    基于pre-trained models 使用低维稠密向量表征高维词句空间。本地知识库的文本的向量表示会存储在 Vector Store 中，
+    用户的 query 也会被相同的 Embedding 方法向量化
+    框架会根据文本向量相似度检索本地知识库，查询出和 query 相关的知识
     """
     model_type: ModelType = ModelType.TEXT_EMBEDDING
 

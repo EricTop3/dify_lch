@@ -68,7 +68,7 @@ class RetrievalService:
             threads.append(embedding_thread)
             embedding_thread.start()
 
-        # retrieval source with full text
+        # retrieval source with full text 全文检索的方式，不需要将查询以及文档向量化，而是直接通过 bm25 算法进行字符串级别的检索 https://www.cnblogs.com/xiaoqi/p/18003267/bm25
         # 文本检索（混合检索中也会调用）
         if RetrievalMethod.is_support_fulltext_search(retrival_method):
             full_text_index_thread = threading.Thread(target=RetrievalService.full_text_index_search, kwargs={
@@ -137,7 +137,7 @@ class RetrievalService:
                 vector = Vector(
                     dataset=dataset
                 )
-
+                # 检索阶段基于 top_k 和 score_threshold 进行过滤
                 documents = vector.search_by_vector(
                     cls.escape_query_for_search(query),
                     search_type='similarity_score_threshold',
@@ -153,6 +153,7 @@ class RetrievalService:
                         data_post_processor = DataPostProcessor(str(dataset.tenant_id),
                                                                 RerankMode.RERANKING_MODEL.value,
                                                                 reranking_model, None, False)
+                        # 重排序阶段基于 score_threshold 进行过滤，top_n 与文档数量相等，不会用于过滤
                         all_documents.extend(data_post_processor.invoke(
                             query=query,
                             documents=documents,

@@ -69,6 +69,7 @@ class HitTestingService:
 
     @classmethod
     def compact_retrieve_response(cls, dataset: Dataset, query: str, documents: list[Document]):
+        # 构造检索输出结果 这里的实现构造返回给前端的输出，本质上就是将检索内容的 Document 信息带上，另外增加了一个 tsne 的计算
         i = 0
         records = []
         for document in documents:
